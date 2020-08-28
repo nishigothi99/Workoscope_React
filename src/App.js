@@ -1,28 +1,17 @@
 import React, {Component } from 'react';
+import ToDo from './ToDo'
 
-class ShoppingList extends Component {
+class App extends Component {
   render() {
     return (
-      <div className="shopping-list">
-        <h1>Shopping List for {this.props.name}</h1>
-        <ul>
-          <li>Instagram</li>
-          <li>WhatsApp</li>
-          <li>FackBook</li>
-          <li>Oculus</li>
-        </ul>
+      <div className="App">
+        <ToDo/>
       </div>
     );
   }
 }
-class App {
-  render(){
-    return(
-      <h1>hello</h1>
-    );
-  }
-}
+
 //checking GIT
 // Example usage: <ShoppingList name="Mark" />
 
-export default ShoppingList, default App;
+export default App;
