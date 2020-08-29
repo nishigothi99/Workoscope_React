@@ -58,13 +58,8 @@ class ToDo extends Component {
 }
 
 const Card = props =>
-    <div className="col-md-6 col-lg-3">
-      <div className="card mb-3">
-        <div className="card-body">
-          <p className="card-title" id="card">{props.info.task}</p>
-        </div>
-      </div>
-    </div>;
+          <p id="card">{props.info.task}</p>
+
 
 export default ToDo;
 
