@@ -67,7 +67,10 @@ class ToDo extends Component {
     if(event.key === 'Enter'){
       console.log("hello")
       document.getElementById("enter").style.display="none"
-
+      var index = this.state.index
+      this.setState({
+        index : null
+      })
     }
   }
 
