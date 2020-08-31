@@ -5,8 +5,10 @@ class ToDo extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      index: null,
+      editing: true,
       data: [],
-      ID: 1,
+      ID: 0,
     };
   }
 
@@ -26,31 +28,48 @@ class ToDo extends Component {
     console.log(data);
   };
   //
-  onDelete = index => {
+  onDelete = (index) => {
+    console.log("Inside delete");
     this.setState({
       data: [
         ...this.state.data.slice(0, index),
-        ...this.state.data.slice(index + 1)
-      ]
+        ...this.state.data.slice(index + 1),
+      ],
     });
-   };
+  };
+  onUpdate = (event,task, ID) => {
+    const data = this.state.data;
+    data.map((item) => {
+      if (ID === item.ID) {
+      
+        console.log("hi");
+        item.task = task;
 
-  //  [1,2,3,4,5]
-  //  slice(0,2) (3)
-  //  [...[1,2],...[4,5]]
-  //... understand
-  //   console.log(this.state.data)
-  // };
-  // onDelete = (ID) => {
-  //   this.setState({
-  //     data: [],
-  //   });
-  // };
+      }
+      return item;
+    });
+    this.setState({
+      data,
+    });
+  };
 
-  // onDelete = ID => {
-  //   const data = this.info.filter(item => item !== this.ID);
-  //   this.setState({ data: data });
-  // };
+
+  onEdit = (index, event) => {
+    console.log("inside Edit");
+
+    this.setState({
+      index,
+    });
+  };
+
+  keyHandle=(event)=>{
+    console.log(event.key)
+    if(event.key === 'Enter'){
+      console.log("hello")
+      document.getElementById("enter").style.display="none"
+
+    }
+  }
 
   render() {
     return (
@@ -65,13 +84,21 @@ class ToDo extends Component {
               type="text"
               placeholder="Enter Task"
               ref={(input) => (this.task = input)}
-            required/>
+              required
+            />
             <button type="submit">Save</button>
           </form>
         </div>
         <div className="row">
-          {this.state.data.map((info,index) => (
-            <Card  info={info} onDelete={() => this.onDelete(index)} />
+          {this.state.data.map((info, index) => (
+            <Card
+              info={info}
+              index={this.state.index}
+              onDelete={() => this.onDelete(index)}
+              onEdit={() => this.onEdit(index)}
+              onUpdate={(event,value,ID) => this.onUpdate(event,value,ID)}
+              keyHandle={(event)=>this.keyHandle(event)}
+            />
           ))}
         </div>
         <hr />
