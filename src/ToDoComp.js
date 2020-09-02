@@ -6,22 +6,24 @@ export const Card = (props) => {
     <div id="card">
       <p>
         Your {props.info.ID} task : {props.info.task}
-        <button onClick={() => props.onDelete(props.info.ID)}>Delete</button>
-        <button onClick={() => props.onEdit(props.info.ID)}>Edit</button>
         <br />
-        
-          {props.index === props.info.ID ? (
-            <input id="enter"
-              type="text"
-              defaultValue={props.info.task}
-              onChange={(event) => {
-              props.onUpdate(event,event.target.value, props.info.ID)
+        {props.index === props.info.ID ? (
+          <input
+            id="enter"
+            type="text"
+            
+            defaultValue={props.info.task}
+            onChange={(event) => {
+              props.onUpdate(event, event.target.value, props.info.ID);
             }}
-            onKeyPress = {(event) => {props.keyHandle(event)}
-            }
-            ></input>
-          ) : null}
-        
+            onKeyPress={(event) => {
+              props.keyHandle(event);
+            }}
+          ></input>
+        ) :<div>
+        <button onClick={() => props.onEdit(props.info.ID)}>Edit</button>
+        <button onClick={() => props.onDelete(props.info.ID)}>Delete</button>
+      </div>}
       </p>
     </div>
   );

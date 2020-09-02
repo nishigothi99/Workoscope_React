@@ -13,12 +13,26 @@ code {
 h1{
   text-align: center;
 }
+form {
+  margin: 30px auto;
+}
 
 .container {
-  position: absolute;
-  /* Center form in page horizontally & vertically */
+  /* position: absolute; */
 
+    width: 35%;
+    margin: 44px auto;
+    padding: 10px;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+
+  /* Center form in page horizontally & vertically */
+/* 
   margin-top: 50px;
+  margin-left:100px;
+  margin-right:100px */
 }
 
 #row {
