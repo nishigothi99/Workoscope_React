@@ -1,150 +1,323 @@
-import React,{ Component } from "react";
+import React, { Component } from "react";
 
 export default class FORM extends Component {
   constructor(props) {
     super(props);
     this.state = {
-    data:[],
-    FirstnameError: ""
+      username: null,
+      lastname: null,
+      email: null,
+      phone: null,
+      add: null,
+      dob: null,
+      city:null,
+      state:null,
+      country:null,
+      gender:null,
+     
+      errors: {
+        username: "",
+        lastname: "",
+        email: "",
+        phone: "",
+        add: "",
+        dob: "",
+        city:"",
+        state:"",
+        country:"",
+        gender:""
+        
+      },
     };
   }
+  validateForm = (errors) => {
+    let valid = true;
+    console.log(Object.values(errors))
+    Object.values(errors).forEach((val) =>
+      val.length > 0 ? (valid = false) : ''
+    );
+    return valid;
+  };
 
-  // validate= () =>{
-  //   let FirstnameError = "";
-  //   var name=this.state.data
-  //   console.log(name)
-  //   // if(!name.match(/^[a-zA-Z]+$/)){
-  //   //   FirstnameError="Enter Proper First name"
-  //   //   this.setState({FirstnameError})
-  //   //   return false
-  //   // }
-  //   return true
-  // }
+  validate = (name, errors, value) => {
+    const validName = RegExp(/^[a-z]{3,12}$/i);
+    const validEmail = RegExp(
+      /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
+    );
+    const validPhone = RegExp(/^\d{10}$/);
+    console.log(value);
+    switch (name) {
+      case "username":
+        errors.username = validName.test(value)
+          ? ""
+          : "Full Name must be 3 characters long!";
+        break;
+      case "lastname":
+        errors.lastname = validName.test(value)
+          ? ""
+          : "Last name must be 3 characters long";
+        break;
+      case "email":
+        errors.email = validEmail.test(value) ? "" : "Enter a valid email";
+        break;
+      case "phone":
+        errors.phone = validPhone.test(value)
+          ? ""
+          : "Enter a valid Phone number";
+        break;
+      case "add":
+        errors.add = value.length > 0 ? "" : "Address cannot be empty";
+        break;
+      case "dob":
+        errors.dob = value.length > 0 ? "" : "DOB cannot be empty";
+        break;
+        case "city":
+          errors.city = value.length > 0 ? "" : "Choose One City";
+          break;
+        case "state":
+          errors.state = value.length > 0 ? "" : "Choose One State";
+          break;
+        case "country":
+          errors.country = value.length > 0 ? "" : "Choose One Country";
+          break;
+        case 'gender':
+          errors.gender = (!(value == "Male" || value == "Female"))? "" : "Please select your gender";
 
-  handleSubmit= (event) =>{
-    // event.preventDefault();
-    // let FirstnameError = "";
-
-    // const info = { name: this.name.value };
-    // console.log(info)
-    // const data = [...this.state.data, info];
-    // console.log(data)
-    // this.setState({
-    //   data,
-    // });
-    // console.log(data)
-    //   if(!data[0]["name"].match(/^[a-zA-Z]+$/)){
-    //   FirstnameError="Enter Proper First name"
-    //   this.setState({FirstnameError}) 
-    // }
-    // else{
-    //     this.setState({data})
-    //     console.log(this.state.data)
-    //   }
+      default:
+        break;
     }
-//different method to take input 
+    this.setState({ errors, [name]: value });
+  };
+  handleChange = (event) => {
+    event.preventDefault();
+    console.log(event.target);
+    const { name, value } = event.target;
+    let errors = this.state.errors;
+    this.validate(name, errors, value);
+  };
 
-render(){
-  return(
-    <form  method="GET" id="vform"   name="vform"  >
-    <fieldset>
-    <legend><b><mark>Registration Form</mark></b></legend> 
-    <div id="username_div">
-      <label>Firstname</label> <br/>
-      <input type="text" name="username" id="fname" onChange={this.handleSubmit} className="textInput"/>
-      <div id="name_error"></div>
-    </div>
-    <br/>
-    <div id="lname_div">
-      <label>Lastname</label> <br/>
-      <input type="text" name="lname" id="lname" value="" className="textInput"/>
-      <div id="lname_error"></div>
-    </div>
-    <br/>
-    <div id="dob_div">
-      <label>DOB</label> <br/>
-      <input type="date" name="dob" id="dob" value="" className="textInput"/>
-      <div id="dob_error"></div>
-    </div>
-    <br/>
-    <div id="email_div">
-      <label>Email</label> <br/>
-      <input type="text" name="email" id="email" value="" className="textInput"/>
-      <div id="email_error"></div>
-    </div>
-    <br/>
-    <div id="gender_div">
-      <label>Gender</label>
-      <input type="radio" name="gender" id="Male" value="Male" />Male
-      <input type="radio" name="gender" id="Female" value="Female" />Female
-      <div id="gender_error"></div>
-    </div><br/>
-      <div id="phone_div">
-      <label>Phone Number</label> <br/>
-      <input type="text" name="phone" id="phone" value="" className="textInput"/>
-      <div id="phone_error"></div>
-    </div><br/>
-    <div id="add_div">
-      <label>Address</label> <br/>
-      <textarea type="text" name="add" id="add" value="" rows="5" cols="35" ></textarea>
-      <div id="add_error"></div>
-    </div>
-    <br/>
-    <div id = "skill_div">
-      <label>Skills</label> <br/>
-      <div id="Skillset"></div>
+  handleSubmit = (event) => {
+    event.preventDefault();
+    const errors = this.state.errors;
+    const Firstname = event.target.username.name;
+    const NameValue = event.target.username.value;
+    const Lastname = event.target.lastname.name;
+    const LastValue = event.target.lastname.value;
+    const Email = event.target.email.name;
+    const EmailValue = event.target.email.value;
+    const Phone = event.target.phone.name;
+    const PhoneValue = event.target.phone.value;
+    const Add = event.target.add.name;
+    const AddValue = event.target.add.value;
+    const Dob = event.target.dob.name;
+    const DobValue = event.target.dob.value;
+    const City = event.target.city.name;
+    const CityValue = event.target.city.value;
+    const State = event.target.state.name;
+    const StateValue = event.target.state.value;
+    const Country = event.target.country.name;
+    const CountryValue = event.target.country.value;
+    const Gender = event.target.gender.name;
+    const GenderValue = event.target.gender.value;
+    console.log(GenderValue)
 
-        <div id="skill_error"></div>
-      </div><br/>
-      <div id="city_div">
-        <label>City</label>
-              <select name="city" id="city" value="">
-              <option value=""></option>
-              <option value="Ahmedabad">Ahmedabad</option>
-              <option value="Gandhinagar">Gandhinagar</option>
-              <option value="Vadodra">Vadodra</option>
-              <option value="Rajkot">Rajkot</option>
-              <option value="Jamnagar">Jamnagar</option>
-              <option value="Bhavnagar">Bhavnagar</option>
-          </select><br/>
-           <div id="city_error"></div>
-      </div><br/>
+    this.validate(Firstname, errors, NameValue);
+    this.validate(Lastname, errors, LastValue);
+    this.validate(Email, errors, EmailValue);
+    this.validate(Phone, errors, PhoneValue);
+    this.validate(Add, errors, AddValue);
+    this.validate(Dob, errors, DobValue);
+    this.validate(City, errors, CityValue);
+    this.validate(State, errors, StateValue);
+    this.validate(Country, errors, CountryValue);
+    this.validate(Gender, errors, GenderValue);
+
+
+    if (this.validateForm(this.state.errors)) {
+      console.log("Valid Form");
+    } else {
+      console.log("Invalid Form");
+    }
+  };
+
+  //different method to take input
+
+  render() {
+    const { errors } = this.state;
+    return (
+      <div className="container">
+        <form method="GET" id="vform" name="vform" onSubmit={this.handleSubmit}>
+          <fieldset>
+            <legend>
+              <b>
+                <mark>Registration Form</mark>
+              </b>
+            </legend>
+            <div id="username_div">
+              <label>Firstname</label> <br />
+              <input
+                type="text"
+                name="username"
+                id="fname"
+                onChange={this.handleChange}
+                className="textInput"
+              />
+              {errors.username.length > 0 ? (
+                <span className="error">{errors.username}</span>
+              ) : null}
+            </div>
+            <br />
+            <div id="lname_div">
+              <label>Lastname</label> <br />
+              <input
+                type="text"
+                name="lastname"
+                id="lname"
+                onChange={this.handleChange}
+                className="textInput"
+              />
+              {errors.lastname.length > 0 ? (
+                <span className="error">{errors.lastname}</span>
+              ) : null}
+            </div>
+            <br />
+            <div id="dob_div">
+              <label>DOB</label> <br />
+              <input
+                type="date"
+                name="dob"
+                id="dob"
+                onChange={this.handleChange}
+                className="textInput"
+              />
+              {errors.dob.length > 0 ? (
+                <span className="error">{errors.dob}</span>
+              ) : null}
+            </div>
+            <br />
+            <div id="email_div">
+              <label>Email</label> <br />
+              <input
+                type="text"
+                name="email"
+                id="email"
+                onChange={this.handleChange}
+                className="textInput"
+              />
+              {errors.email.length > 0 ? (
+                <span className="error">{errors.email}</span>
+              ) : null}
+            </div>
+            <br />
+            <div id="gender_div">
+              <label>Gender</label>
+              <input type="radio" name="gender" id="Male" value="Male" />
+              Male
+              <input type="radio" name="gender" id="Female" value="Female" />
+              Female
+              {errors.gender.length > 0 ? (
+                <span className="error">{errors.gender}</span>
+              ) : null}
+            </div>
+            <br />
+            <div id="phone_div">
+              <label>Phone Number</label> <br />
+              <input
+                type="text"
+                name="phone"
+                id="phone"
+                onChange={this.handleChange}
+                className="textInput"
+              />
+              {errors.phone.length > 0 ? (
+                <span className="error">{errors.phone}</span>
+              ) : null}
+            </div>
+            <br />
+            <div id="add_div">
+              <label>Address</label> <br />
+              <textarea
+                type="text"
+                name="add"
+                id="add"
+                onChange={this.handleChange}
+                rows="5"
+                cols="35"
+              ></textarea>
+              <br />
+              {errors.add.length > 0 ? (
+                <span className="error">{errors.add}</span>
+              ) : null}
+            </div>
+            <br />
+            {/* <div id="skill_div">
+              <label>Skills</label> <br />
+              <div id="Skillset"></div>
+              <div id="skill_error"></div>
+            </div>
+            <br /> */}
+            <div id="city_div">
+              <label>City</label>
+              <select name="city" id="city" onChange={this.handleChange}>
+                <option value=""></option>
+                <option value="Ahmedabad">Ahmedabad</option>
+                <option value="Gandhinagar">Gandhinagar</option>
+                <option value="Vadodra">Vadodra</option>
+                <option value="Rajkot">Rajkot</option>
+                <option value="Jamnagar">Jamnagar</option>
+                <option value="Bhavnagar">Bhavnagar</option>
+              </select>
+              <br />
+              {errors.city.length > 0 ? (
+                <span className="error">{errors.city}</span>
+              ) : null}
+            </div>
+            <br />
 
             <div id="state_div">
-        <label>State</label>
-              <select name="state" id="state" value="">
-              <option value=""></option>
-              <option value="Gujarat">Gujarat</option>
-              <option value="Delhi">Delhi</option>
-              <option value="Rajasthan">Rajasthan</option>
-              <option value="Mahrastra">Mahrastra</option>
-              <option value="Madhya Pradesh">Madhya Pradesh</option>
-          </select><br/>
-           <div id="state_error"></div>
-      </div><br/>
-      <div id="country_div">
-        <label>Country</label>
-              <select name="country" id="country" value="">
-              <option value=""></option>
-              <option value="India">India</option>
-              <option value="Nepal">Nepal</option>
-              <option value="Canada">Canada</option>
-              <option value="USA">USA</option>
-              <option value="Australia">Australia</option>
-          </select><br/>
-           <div id="country_error"></div>
-      </div><br/>
+              <label>State</label>
+              <select name="state" id="state" onChange={this.handleChange}>
+                <option value=""></option>
+                <option value="Gujarat">Gujarat</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="Mahrastra">Mahrastra</option>
+                <option value="Madhya Pradesh">Madhya Pradesh</option>
+              </select>
+              <br />
+              {errors.state.length > 0 ? (
+                <span className="error">{errors.state}</span>
+              ) : null}
+            </div>
+            <br />
+            <div id="country_div">
+              <label>Country</label>
+              <select name="country" id="country" onChange={this.handleChange}>
+                <option value=""></option>
+                <option value="India">India</option>
+                <option value="Nepal">Nepal</option>
+                <option value="Canada">Canada</option>
+                <option value="USA">USA</option>
+                <option value="Australia">Australia</option>
+              </select>
+              <br />
+              {errors.country.length > 0 ? (
+                <span className="error">{errors.country}</span>
+              ) : null}
+            </div>
+            <br />
 
-    <div id="formsubmitbutton">
-    <input type="submit" name="register" id="submit" value="Register" className="btn"/>
-    </div>
-<div id="buttonreplacement" className="btn" style={{ height: 30, width: "auto", display: "none" }}>
-  <img src="http://www.willmaster.com/images/preload.gif" alt="loading..." style={{paddingLeft: 180 +"px" }}/>
-</div>
-    </fieldset>
-    <script type="text/javascript" src="scripts.js"></script>
-    <p id="post"></p>
-   </form>
+            <div id="formsubmitbutton">
+              <button type="submit" name="register" id="submit" className="btn">
+                Register
+              </button>
+            </div>
+          </fieldset>
+          <script type="text/javascript" src="scripts.js"></script>
+        </form>
+      </div>
     );
   }
 }
+
+// dropDown using Map
