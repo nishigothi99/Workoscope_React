@@ -14,7 +14,7 @@ export default class FORM extends Component {
       state:null,
       country:null,
       gender:null,
-     
+     dataskills:'default',
       errors: {
         username: "",
         lastname: "",
@@ -30,6 +30,49 @@ export default class FORM extends Component {
       },
     };
   }
+  componentDidMount() {
+    const dataskills = this.state.dataskills
+    const url='http://localhost:3000/api/skills'
+    
+   fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+      console.log('This is your data', data)
+      var arr = []
+      data.forEach((item)=>{
+        arr.push(item["Skill_name"])
+      })
+    })
+    .then((data) => this.setState({ dataskills: data }))
+    .catch((err)=>{
+      console.log("Error",err)
+    });
+
+  }
+  // fetch(url)
+  // .then((response) => {
+  //   console.log(response);
+  //   return response.json();
+  // })
+  // .then((data) => {
+  //   // console.log(data)
+  //   data.forEach((item) => {
+  //     var hold = document.getElementById("Skillset");
+  //     var checkbox = document.createElement("input");
+  //     checkbox.setAttribute("type", "checkbox");
+  //     checkbox.setAttribute("id", item["Skill_name"]);
+  //     checkbox.setAttribute("value", item["Skill_id"]);
+  //     checkbox.setAttribute("name",item["Skill_name"]);
+  //     var label = document.createElement("label");
+  //     var tn = document.createTextNode(item["Skill_name"]);
+  //     label.appendChild(tn);
+  //     hold.appendChild(label);
+  //     hold.appendChild(checkbox);
+  //   });
+  // })
+  // .catch((err) => console.log("Skill not fetched"));
+
+
   validateForm = (errors) => {
     let valid = true;
     console.log(Object.values(errors))
@@ -45,7 +88,7 @@ export default class FORM extends Component {
       /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i
     );
     const validPhone = RegExp(/^\d{10}$/);
-    console.log(value);
+    // console.log(name);
     switch (name) {
       case "username":
         errors.username = validName.test(value)
@@ -78,11 +121,13 @@ export default class FORM extends Component {
           errors.state = value.length > 0 ? "" : "Choose One State";
           break;
         case "country":
+          console.log("country",value)
           errors.country = value.length > 0 ? "" : "Choose One Country";
           break;
-        case 'gender':
-          errors.gender = (!(value == "Male" || value == "Female"))? "" : "Please select your gender";
-
+        case "gender":
+          console.log((value!== ""))
+          errors.gender = (value!== "") ? "" : "Please select your gender";
+          break;
       default:
         break;
     }
@@ -117,10 +162,16 @@ export default class FORM extends Component {
     const StateValue = event.target.state.value;
     const Country = event.target.country.name;
     const CountryValue = event.target.country.value;
-    const Gender = event.target.gender.name;
+    const Gender = event.target.gender;
     const GenderValue = event.target.gender.value;
-    console.log(GenderValue)
-
+     var arr=[]
+    Gender.forEach((item) =>{
+      arr.push(item.name)
+    })
+    const Skills = event.target.skill.value;
+    // const SkillValue = event.target.skill.value;
+    console.log(Skills)
+    
     this.validate(Firstname, errors, NameValue);
     this.validate(Lastname, errors, LastValue);
     this.validate(Email, errors, EmailValue);
@@ -130,7 +181,7 @@ export default class FORM extends Component {
     this.validate(City, errors, CityValue);
     this.validate(State, errors, StateValue);
     this.validate(Country, errors, CountryValue);
-    this.validate(Gender, errors, GenderValue);
+    this.validate(arr[0], errors, GenderValue);
 
 
     if (this.validateForm(this.state.errors)) {
@@ -140,13 +191,19 @@ export default class FORM extends Component {
     }
   };
 
+
   //different method to take input
 
   render() {
     const { errors } = this.state;
+    const obj = {
+      city: ["","Ahmedabad","Surat","Rajkot"],
+      state:["","Gujarat","Maharastra"],
+      country:["","India","Canada"]}
+    
     return (
-      <div className="container">
-        <form method="GET" id="vform" name="vform" onSubmit={this.handleSubmit}>
+      <div className="container" >
+        <form method="GET" id="vform" name="vform"  onSubmit={this.handleSubmit}>
           <fieldset>
             <legend>
               <b>
@@ -211,10 +268,10 @@ export default class FORM extends Component {
             <br />
             <div id="gender_div">
               <label>Gender</label>
-              <input type="radio" name="gender" id="Male" value="Male" />
+              <input type="radio" name="gender" id="Male" value="Male" onChange={this.handleChange}/>
               Male
-              <input type="radio" name="gender" id="Female" value="Female" />
-              Female
+              <input type="radio" name="gender" id="Female" value="Female" onChange={this.handleChange}/>
+              Female<br/>
               {errors.gender.length > 0 ? (
                 <span className="error">{errors.gender}</span>
               ) : null}
@@ -250,22 +307,26 @@ export default class FORM extends Component {
               ) : null}
             </div>
             <br />
-            {/* <div id="skill_div">
+            <div id="skill_div">
               <label>Skills</label> <br />
-              <div id="Skillset"></div>
+              <div id="Skillset">
+                {this.state.dataskills}
+              {/* {this.state.data["Skill_name"].forEach((item)=>
+              (
+                // <input type="checkbox" name={item} value={item}/>
+              <label>{item}</label>
+              )
+              )} */}
+              </div>
               <div id="skill_error"></div>
             </div>
-            <br /> */}
+            <br />
             <div id="city_div">
               <label>City</label>
               <select name="city" id="city" onChange={this.handleChange}>
-                <option value=""></option>
-                <option value="Ahmedabad">Ahmedabad</option>
-                <option value="Gandhinagar">Gandhinagar</option>
-                <option value="Vadodra">Vadodra</option>
-                <option value="Rajkot">Rajkot</option>
-                <option value="Jamnagar">Jamnagar</option>
-                <option value="Bhavnagar">Bhavnagar</option>
+              {obj["city"].map((item) =>
+                    <option key={item}>{item}</option>
+                 )}
               </select>
               <br />
               {errors.city.length > 0 ? (
@@ -277,12 +338,9 @@ export default class FORM extends Component {
             <div id="state_div">
               <label>State</label>
               <select name="state" id="state" onChange={this.handleChange}>
-                <option value=""></option>
-                <option value="Gujarat">Gujarat</option>
-                <option value="Delhi">Delhi</option>
-                <option value="Rajasthan">Rajasthan</option>
-                <option value="Mahrastra">Mahrastra</option>
-                <option value="Madhya Pradesh">Madhya Pradesh</option>
+              {obj["state"].map((item) =>
+                    <option key={item}>{item}</option>
+                 )}
               </select>
               <br />
               {errors.state.length > 0 ? (
@@ -293,12 +351,9 @@ export default class FORM extends Component {
             <div id="country_div">
               <label>Country</label>
               <select name="country" id="country" onChange={this.handleChange}>
-                <option value=""></option>
-                <option value="India">India</option>
-                <option value="Nepal">Nepal</option>
-                <option value="Canada">Canada</option>
-                <option value="USA">USA</option>
-                <option value="Australia">Australia</option>
+              {obj["country"].map((item) =>
+                    <option key={item}>{item}</option>
+                 )}
               </select>
               <br />
               {errors.country.length > 0 ? (
