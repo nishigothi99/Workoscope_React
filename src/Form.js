@@ -136,21 +136,27 @@ export default class FORM extends Component {
     const Gender = event.target.gender;
     const GenderValue = event.target.gender.value;
     const Skill = event.target.skill[0].name;
-    const SkillValue = event.target.skill.value;
+ 
     // console.log(event.target)
     // console.log(Skill[0].name)
     // console.log(SkillValue)
-    var arr = [];
-    var arr1 = [];
+    var  gender= [];
+    var SkillValue = [];
     Gender.forEach((item) => {
-      arr.push(item.name);
+      gender.push(item.name);
     });
+    var GenderName = gender[0]
     document
       .querySelectorAll('input[type="checkbox"]:checked')
       .forEach((item) => {
-        arr1.push(item.value);
+        SkillValue.push(item.value);
       });
-    console.log(arr1);
+      var SkillId = []
+      document
+      .querySelectorAll('input[type="checkbox"]:checked')
+      .forEach((item) => {
+        SkillId.push(item.id);
+      });
     // const SkillValue = event.target.skill.value;
 
     this.validate(Firstname, errors, NameValue);
@@ -162,11 +168,36 @@ export default class FORM extends Component {
     this.validate(City, errors, CityValue);
     this.validate(State, errors, StateValue);
     this.validate(Country, errors, CountryValue);
-    this.validate(arr[0], errors, GenderValue);
-    this.validate(Skill, errors, arr1);
+    this.validate(GenderName, errors, GenderValue);
+    this.validate(Skill, errors, SkillValue);
 
     if (this.validateForm(this.state.errors)) {
       console.log("Valid Form");
+      const post_data={
+        Firstname:NameValue,
+        Lastname:LastValue,
+        Email:EmailValue,
+        Phone:PhoneValue,
+        Add:AddValue,
+        Dob:DobValue,
+        City:CityValue,
+        State:StateValue,
+        Country:CountryValue,
+        GenderName:GenderValue,
+        Skill:SkillId
+      }
+      console.log(post_data)
+      fetch("http://localhost:3000/api/add", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify(post_data),
+      })
+        .then((res) => {
+          console.log("then 1");
+          return res.json();
+        })
     } else {
       console.log("Invalid Form");
     }
