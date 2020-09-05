@@ -10,11 +10,12 @@ export default class FORM extends Component {
       phone: null,
       add: null,
       dob: null,
-      city:null,
-      state:null,
-      country:null,
-      gender:null,
-     dataskills:'default',
+      city: null,
+      state: null,
+      country: null,
+      gender: null,
+      dataskills: [],
+      skill: null,
       errors: {
         username: "",
         lastname: "",
@@ -22,62 +23,29 @@ export default class FORM extends Component {
         phone: "",
         add: "",
         dob: "",
-        city:"",
-        state:"",
-        country:"",
-        gender:""
-        
+        city: "",
+        state: "",
+        country: "",
+        gender: "",
+        skill: "",
       },
     };
   }
   componentDidMount() {
-    const dataskills = this.state.dataskills
-    const url='http://localhost:3000/api/skills'
-    
-   fetch(url)
-    .then((response) => response.json())
-    .then((data) => {
-      console.log('This is your data', data)
-      var arr = []
-      data.forEach((item)=>{
-        arr.push(item["Skill_name"])
-      })
-    })
-    .then((data) => this.setState({ dataskills: data }))
-    .catch((err)=>{
-      console.log("Error",err)
-    });
-
+    const apiUrl = "http://localhost:3000/api/skills";
+    fetch(apiUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("This is your data", data);
+        this.setState({ dataskills: data });
+      });
   }
-  // fetch(url)
-  // .then((response) => {
-  //   console.log(response);
-  //   return response.json();
-  // })
-  // .then((data) => {
-  //   // console.log(data)
-  //   data.forEach((item) => {
-  //     var hold = document.getElementById("Skillset");
-  //     var checkbox = document.createElement("input");
-  //     checkbox.setAttribute("type", "checkbox");
-  //     checkbox.setAttribute("id", item["Skill_name"]);
-  //     checkbox.setAttribute("value", item["Skill_id"]);
-  //     checkbox.setAttribute("name",item["Skill_name"]);
-  //     var label = document.createElement("label");
-  //     var tn = document.createTextNode(item["Skill_name"]);
-  //     label.appendChild(tn);
-  //     hold.appendChild(label);
-  //     hold.appendChild(checkbox);
-  //   });
-  // })
-  // .catch((err) => console.log("Skill not fetched"));
-
 
   validateForm = (errors) => {
     let valid = true;
-    console.log(Object.values(errors))
+    console.log(Object.values(errors));
     Object.values(errors).forEach((val) =>
-      val.length > 0 ? (valid = false) : ''
+      val.length > 0 ? (valid = false) : ""
     );
     return valid;
   };
@@ -114,20 +82,23 @@ export default class FORM extends Component {
       case "dob":
         errors.dob = value.length > 0 ? "" : "DOB cannot be empty";
         break;
-        case "city":
-          errors.city = value.length > 0 ? "" : "Choose One City";
-          break;
-        case "state":
-          errors.state = value.length > 0 ? "" : "Choose One State";
-          break;
-        case "country":
-          console.log("country",value)
-          errors.country = value.length > 0 ? "" : "Choose One Country";
-          break;
-        case "gender":
-          console.log((value!== ""))
-          errors.gender = (value!== "") ? "" : "Please select your gender";
-          break;
+      case "city":
+        errors.city = value.length > 0 ? "" : "Choose One City";
+        break;
+      case "state":
+        errors.state = value.length > 0 ? "" : "Choose One State";
+        break;
+      case "country":
+        console.log("country", value);
+        errors.country = value.length > 0 ? "" : "Choose One Country";
+        break;
+      case "gender":
+        // console.log((value!== ""))
+        errors.gender = value !== "" ? "" : "Please select your gender";
+        break;
+      case "skill":
+        console.log(value.length > 2);
+        errors.skill = value.length > 2 ? "" : "Please Select 3 skills";
       default:
         break;
     }
@@ -164,14 +135,24 @@ export default class FORM extends Component {
     const CountryValue = event.target.country.value;
     const Gender = event.target.gender;
     const GenderValue = event.target.gender.value;
-     var arr=[]
-    Gender.forEach((item) =>{
-      arr.push(item.name)
-    })
-    const Skills = event.target.skill.value;
+    const Skill = event.target.skill[0].name;
+    const SkillValue = event.target.skill.value;
+    // console.log(event.target)
+    // console.log(Skill[0].name)
+    // console.log(SkillValue)
+    var arr = [];
+    var arr1 = [];
+    Gender.forEach((item) => {
+      arr.push(item.name);
+    });
+    document
+      .querySelectorAll('input[type="checkbox"]:checked')
+      .forEach((item) => {
+        arr1.push(item.value);
+      });
+    console.log(arr1);
     // const SkillValue = event.target.skill.value;
-    console.log(Skills)
-    
+
     this.validate(Firstname, errors, NameValue);
     this.validate(Lastname, errors, LastValue);
     this.validate(Email, errors, EmailValue);
@@ -182,7 +163,7 @@ export default class FORM extends Component {
     this.validate(State, errors, StateValue);
     this.validate(Country, errors, CountryValue);
     this.validate(arr[0], errors, GenderValue);
-
+    this.validate(Skill, errors, arr1);
 
     if (this.validateForm(this.state.errors)) {
       console.log("Valid Form");
@@ -191,19 +172,19 @@ export default class FORM extends Component {
     }
   };
 
-
   //different method to take input
 
   render() {
     const { errors } = this.state;
     const obj = {
-      city: ["","Ahmedabad","Surat","Rajkot"],
-      state:["","Gujarat","Maharastra"],
-      country:["","India","Canada"]}
-    
+      city: ["", "Ahmedabad", "Surat", "Rajkot"],
+      state: ["", "Gujarat", "Maharastra"],
+      country: ["", "India", "Canada"],
+    };
+
     return (
-      <div className="container" >
-        <form method="GET" id="vform" name="vform"  onSubmit={this.handleSubmit}>
+      <div className="container">
+        <form method="GET" id="vform" name="vform" onSubmit={this.handleSubmit}>
           <fieldset>
             <legend>
               <b>
@@ -268,10 +249,23 @@ export default class FORM extends Component {
             <br />
             <div id="gender_div">
               <label>Gender</label>
-              <input type="radio" name="gender" id="Male" value="Male" onChange={this.handleChange}/>
+              <input
+                type="radio"
+                name="gender"
+                id="Male"
+                value="Male"
+                onChange={this.handleChange}
+              />
               Male
-              <input type="radio" name="gender" id="Female" value="Female" onChange={this.handleChange}/>
-              Female<br/>
+              <input
+                type="radio"
+                name="gender"
+                id="Female"
+                value="Female"
+                onChange={this.handleChange}
+              />
+              Female
+              <br />
               {errors.gender.length > 0 ? (
                 <span className="error">{errors.gender}</span>
               ) : null}
@@ -309,24 +303,29 @@ export default class FORM extends Component {
             <br />
             <div id="skill_div">
               <label>Skills</label> <br />
-              <div id="Skillset">
-                {this.state.dataskills}
-              {/* {this.state.data["Skill_name"].forEach((item)=>
-              (
-                // <input type="checkbox" name={item} value={item}/>
-              <label>{item}</label>
-              )
-              )} */}
-              </div>
-              <div id="skill_error"></div>
+              {this.state.dataskills.map((item) => (
+                <label>
+                  <input
+                    type="checkbox"
+                    name="skill"
+                    key={item.Skill_id}
+                    id={item.Skill_id}
+                    value={item.Skill_name}
+                  />
+                  {item.Skill_name}
+                </label>
+              ))}
+              {errors.skill.length > 0 ? (
+                <span className="error">{errors.skill}</span>
+              ) : null}
             </div>
             <br />
             <div id="city_div">
               <label>City</label>
               <select name="city" id="city" onChange={this.handleChange}>
-              {obj["city"].map((item) =>
-                    <option key={item}>{item}</option>
-                 )}
+                {obj["city"].map((item) => (
+                  <option key={item}>{item}</option>
+                ))}
               </select>
               <br />
               {errors.city.length > 0 ? (
@@ -338,9 +337,9 @@ export default class FORM extends Component {
             <div id="state_div">
               <label>State</label>
               <select name="state" id="state" onChange={this.handleChange}>
-              {obj["state"].map((item) =>
-                    <option key={item}>{item}</option>
-                 )}
+                {obj["state"].map((item) => (
+                  <option key={item}>{item}</option>
+                ))}
               </select>
               <br />
               {errors.state.length > 0 ? (
@@ -351,9 +350,9 @@ export default class FORM extends Component {
             <div id="country_div">
               <label>Country</label>
               <select name="country" id="country" onChange={this.handleChange}>
-              {obj["country"].map((item) =>
-                    <option key={item}>{item}</option>
-                 )}
+                {obj["country"].map((item) => (
+                  <option key={item}>{item}</option>
+                ))}
               </select>
               <br />
               {errors.country.length > 0 ? (
